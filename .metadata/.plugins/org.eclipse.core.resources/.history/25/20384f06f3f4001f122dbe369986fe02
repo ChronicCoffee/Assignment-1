@@ -1,0 +1,43 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Provides an insertion sort implementation for an array of Shape objects.
+ * The sort is performed in descending order (largest element first).
+ * If a Comparator is provided, it is used; otherwise, the natural ordering (Comparable) is used.
+ */
+public class InsertionSort {
+    /**
+     * Sorts the given array of shapes using the insertion sort algorithm.
+     * The array is sorted in descending order.
+     *
+     * @param arr the array of shapes to sort
+     * @param cmp the Comparator used to determine ordering; if null, natural ordering is used.
+     */
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        // Use natural ordering if no Comparator is provided.
+        if (cmp == null) {
+            cmp = new Comparator<Shape>() {
+                @Override
+                public int compare(Shape s1, Shape s2) {
+                    // Cast to Comparable<Shape> and use natural ordering.
+                    return ((Comparable<Shape>) s1).compareTo(s2);
+                }
+            };
+        }
+        
+        int n = arr.length;
+        for (int i = 1; i < n; i++) {
+            Shape key = arr[i];
+            int j = i - 1;
+            // For descending order, shift elements while arr[j] is less than key.
+            while (j >= 0 && cmp.compare(arr[j], key) < 0) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+}

@@ -1,0 +1,49 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Implements the Heap Sort algorithm as a custom sorting algorithm.
+ */
+public class HeapSort {
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        int n = arr.length;
+        
+        // Build a max heap.
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(arr, n, i, cmp);
+        }
+        
+        // Extract elements one by one from the heap.
+        for (int i = n - 1; i >= 0; i--) {
+            swap(arr, 0, i);
+            heapify(arr, i, 0, cmp);
+        }
+    }
+    
+    private static void heapify(Shape[] arr, int n, int i, Comparator<? super Shape> cmp) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        
+        if (left < n && cmp.compare(arr[left], arr[largest]) > 0) {
+            largest = left;
+        }
+        
+        if (right < n && cmp.compare(arr[right], arr[largest]) > 0) {
+            largest = right;
+        }
+        
+        if (largest != i) {
+            swap(arr, i, largest);
+            heapify(arr, n, largest, cmp);
+        }
+    }
+    
+    private static void swap(Shape[] arr, int i, int j) {
+        Shape temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}

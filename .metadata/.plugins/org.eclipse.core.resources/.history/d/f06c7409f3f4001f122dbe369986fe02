@@ -1,0 +1,85 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Provides a quick sort implementation for an array of Shape objects.
+ * The array is sorted in descending order (largest element first).
+ * If a Comparator is provided, it is used; otherwise, the natural ordering (Comparable) is used.
+ */
+public class QuickSort {
+    /**
+     * Sorts the given array of shapes using the quick sort algorithm.
+     * The array is sorted in descending order.
+     *
+     * @param arr the array of shapes to sort
+     * @param cmp the Comparator used for ordering; if null, natural ordering is used.
+     */
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        // If no comparator is provided, use natural ordering.
+        if (cmp == null) {
+            cmp = new Comparator<Shape>() {
+                @Override
+                public int compare(Shape s1, Shape s2) {
+                    return ((Comparable<Shape>) s1).compareTo(s2);
+                }
+            };
+        }
+        if (arr == null || arr.length < 2) return;
+        quickSort(arr, 0, arr.length - 1, cmp);
+    }
+    
+    /**
+     * Recursively applies quick sort on the subarray arr[low...high].
+     *
+     * @param arr the array of shapes
+     * @param low the starting index of the subarray
+     * @param high the ending index of the subarray
+     * @param cmp the Comparator used for ordering shapes
+     */
+    private static void quickSort(Shape[] arr, int low, int high, Comparator<? super Shape> cmp) {
+        if (low < high) {
+            int pivotIndex = partition(arr, low, high, cmp);
+            quickSort(arr, low, pivotIndex - 1, cmp);
+            quickSort(arr, pivotIndex + 1, high, cmp);
+        }
+    }
+    
+    /**
+     * Partitions the subarray arr[low...high] by selecting the last element as pivot.
+     * Elements greater than or equal to the pivot (in descending order) are placed before it.
+     *
+     * @param arr the array of shapes
+     * @param low the starting index of the subarray
+     * @param high the ending index of the subarray
+     * @param cmp the Comparator used for ordering shapes
+     * @return the index of the pivot element after partitioning
+     */
+    private static int partition(Shape[] arr, int low, int high, Comparator<? super Shape> cmp) {
+        Shape pivot = arr[high];
+        int i = low - 1; // index of the last element that is "greater" than the pivot
+        for (int j = low; j < high; j++) {
+            // For descending order, if arr[j] is greater than or equal to the pivot, swap it.
+            if (cmp.compare(arr[j], pivot) >= 0) {
+                i++;
+                swap(arr, i, j);
+            }
+        }
+        swap(arr, i + 1, high);
+        return i + 1;
+    }
+    
+    /**
+     * Swaps two elements in the given array.
+     *
+     * @param arr the array of shapes
+     * @param i the index of the first element
+     * @param j the index of the second element
+     */
+    private static void swap(Shape[] arr, int i, int j) {
+        Shape temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}

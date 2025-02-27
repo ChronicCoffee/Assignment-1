@@ -1,0 +1,37 @@
+package shapes;
+
+/**
+ * Represents a Triangular Prism with an equilateral triangle as the base.
+ * Base area = (s² * √3) / 4 (s: edge length)
+ * Volume = base area * height
+ */
+public class TriangularPrism extends Shape {
+    private double edge;
+    
+    /**
+     * Constructs a Triangular Prism with the specified height and edge length.
+     * @param height The height of the prism.
+     * @param edge The edge length of the equilateral triangle base.
+     */
+    public TriangularPrism(double height, double edge) {
+        super(height);
+        this.edge = edge;
+    }
+    
+    @Override
+    public double calculateBaseArea() {
+        return (Math.pow(edge, 2) * Math.sqrt(3)) / 4;
+    }
+    
+    @Override
+    public double calculateVolume() {
+        return calculateBaseArea() * height;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " [edge=" + edge +
+               ", baseArea=" + String.format("%.2f", calculateBaseArea()) +
+               ", volume=" + String.format("%.2f", calculateVolume()) + "]";
+    }
+}

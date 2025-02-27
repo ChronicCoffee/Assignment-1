@@ -1,0 +1,224 @@
+package appDomain;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Locale;
+
+import shapes.Shape;
+import shapes.Cone;
+import shapes.Cylinder;
+import shapes.Pyramid;
+import shapes.SquarePrism;
+import shapes.TriangularPrism;
+import shapes.PentagonalPrism;
+import shapes.OctagonalPrism;
+import shapes.VolumeComparator;
+import shapes.BaseAreaComparator;
+
+public class AppDriver {
+
+    public static void main(String[] args) {
+        // Command-line Parsing (Step 4)
+        String fileName = null;
+        Character compareType = null;  // h, v, or a
+        Character sortType = null;     // b, s, i, m, q, or z
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i].trim().toLowerCase(Locale.ROOT);
+            if (arg.startsWith("-f")) {
+                if (arg.length() > 2) fileName = arg.substring(2);
+                else {
+                    if (i + 1 < args.length) fileName = args[++i];
+                    else { System.err.println("Error: Missing file name."); System.exit(1); }
+                }
+            } else if (arg.startsWith("-t")) {
+                if (arg.length() > 2) compareType = arg.charAt(2);
+                else {
+                    if (i + 1 < args.length) compareType = args[++i].trim().toLowerCase(Locale.ROOT).charAt(0);
+                    else { System.err.println("Error: Missing compare type."); System.exit(1); }
+                }
+            } else if (arg.startsWith("-s")) {
+                if (arg.length() > 2) sortType = arg.charAt(2);
+                else {
+                    if (i + 1 < args.length) sortType = args[++i].trim().toLowerCase(Locale.ROOT).charAt(0);
+                    else { System.err.println("Error: Missing sort type."); System.exit(1); }
+                }
+            } else {
+                System.out.println("Warning: Unrecognized argument \"" + arg + "\" will be ignored.");
+            }
+        }
+        if (fileName == null || compareType == null || sortType == null) {
+            System.err.println("Error: Missing required arguments. Usage: java -jar Sort.jar -f<fileName> -t<h/v/a> -s<b/s/i/m/q/z>");
+            System.exit(1);
+        }
+        System.out.println("Parsed Arguments: File: " + fileName + ", CompareType: " + compareType + ", SortType: " + sortType);
+
+        // File Reading and Shape Creation (Step 5)
+        Shape[] shapes = readShapesFromFile(fileName);
+        if (shapes == null) {
+            System.err.println("Error: Unable to load shapes from file.");
+            System.exit(1);
+        }
+        System.out.println("Successfully read " + shapes.length + " shapes from file.");
+
+        // Comparator Selection (Step 6)
+        Comparator<Shape> comparator = null;
+        switch (compareType) {
+            case 'h': 
+                comparator = (s1, s2) -> s1.compareTo(s2);
+                break;
+            case 'v': 
+                comparator = new VolumeComparator();
+                break;
+            case 'a': 
+                comparator = new BaseAreaComparator();
+                break;
+            default:
+                System.err.println("Invalid compare type. Use 'h', 'v', or 'a'.");
+                System.exit(1);
+        }
+        System.out.println("Comparator selected: " + compareType);
+
+        // Benchmarking Sorting Algorithms (Step 8)
+        System.out.println("----- Benchmarking Sorting Algorithms -----");
+        long startTime, endTime;
+
+        Shape[] bubbleArray = shapes.clone();
+        startTime = System.nanoTime();
+        utility.BubbleSort.sort(bubbleArray, comparator);
+        endTime = System.nanoTime();
+        System.out.println("Bubble sort time: " + ((endTime - startTime) / 1_000_000) + " ms.");
+
+        Shape[] selectionArray = shapes.clone();
+        startTime = System.nanoTime();
+        utility.SelectionSort.sort(selectionArray, comparator);
+        endTime = System.nanoTime();
+        System.out.println("Selection sort time: " + ((endTime - startTime) / 1_000_000) + " ms.");
+
+        Shape[] insertionArray = shapes.clone();
+        startTime = System.nanoTime();
+        utility.InsertionSort.sort(insertionArray, comparator);
+        endTime = System.nanoTime();
+        System.out.println("Insertion sort time: " + ((endTime - startTime) / 1_000_000) + " ms.");
+
+        Shape[] mergeArray = shapes.clone();
+        startTime = System.nanoTime();
+        utility.MergeSort.sort(mergeArray, comparator);
+        endTime = System.nanoTime();
+        System.out.println("Merge sort time: " + ((endTime - startTime) / 1_000_000) + " ms.");
+
+        Shape[] quickArray = shapes.clone();
+        startTime = System.nanoTime();
+        utility.QuickSort.sort(quickArray, comparator);
+        endTime = System.nanoTime();
+        System.out.println("Quick sort time: " + ((endTime - startTime) / 1_000_000) + " ms.");
+
+        Shape[] customArray = shapes.clone();
+        startTime = System.nanoTime();
+        utility.HeapSort.sort(customArray, comparator);  // Replace HeapSort with your custom sort if different
+        endTime = System.nanoTime();
+        System.out.println("Custom sort time: " + ((endTime - startTime) / 1_000_000) + " ms.");
+        System.out.println("----- End of Benchmarking -----");
+
+        // Sorting with the Chosen Algorithm and Displaying Sorted Output (Step 9)
+        Shape[] chosenSortArray = shapes.clone();
+        switch (sortType) {
+            case 'b':
+                utility.BubbleSort.sort(chosenSortArray, comparator);
+                break;
+            case 's':
+                utility.SelectionSort.sort(chosenSortArray, comparator);
+                break;
+            case 'i':
+                utility.InsertionSort.sort(chosenSortArray, comparator);
+                break;
+            case 'm':
+                utility.MergeSort.sort(chosenSortArray, comparator);
+                break;
+            case 'q':
+                utility.QuickSort.sort(chosenSortArray, comparator);
+                break;
+            case 'z':
+                utility.HeapSort.sort(chosenSortArray, comparator);
+                break;
+            default:
+                System.err.println("Invalid sort type: " + sortType);
+                System.exit(1);
+        }
+        displaySortedShapes(chosenSortArray);
+    }
+
+    public static Shape[] readShapesFromFile(String fileName) {
+        Shape[] shapes = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String firstLine = br.readLine();
+            if (firstLine == null) {
+                System.err.println("Error: File is empty!");
+                return null;
+            }
+            int numShapes = Integer.parseInt(firstLine.trim());
+            shapes = new Shape[numShapes];
+            for (int i = 0; i < numShapes; i++) {
+                String currentLine = br.readLine();
+                if (currentLine == null) {
+                    System.err.println("Warning: Expected " + numShapes + " shapes, but file ended early.");
+                    break;
+                }
+                String[] tokens = currentLine.trim().split("\\s+");
+                if (tokens.length < 3) {
+                    System.err.println("Warning: Insufficient data in line: " + currentLine);
+                    continue;
+                }
+                String shapeType = tokens[0].toLowerCase();
+                double height = Double.parseDouble(tokens[1]);
+                double secondParam = Double.parseDouble(tokens[2]);
+                switch (shapeType) {
+                    case "cylinder":
+                        shapes[i] = new Cylinder(height, secondParam);
+                        break;
+                    case "cone":
+                        shapes[i] = new Cone(height, secondParam);
+                        break;
+                    case "pyramid":
+                        shapes[i] = new Pyramid(height, secondParam);
+                        break;
+                    case "squareprism":
+                        shapes[i] = new SquarePrism(height, secondParam);
+                        break;
+                    case "triangularprism":
+                        shapes[i] = new TriangularPrism(height, secondParam);
+                        break;
+                    case "pentagonalprism":
+                        shapes[i] = new PentagonalPrism(height, secondParam);
+                        break;
+                    case "octagonalprism":
+                        shapes[i] = new OctagonalPrism(height, secondParam);
+                        break;
+                    default:
+                        System.err.println("Unknown shape type: " + shapeType + " in line: " + currentLine);
+                        break;
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            return null;
+        }
+        return shapes;
+    }
+
+    public static void displaySortedShapes(Shape[] sortedShapes) {
+        int length = sortedShapes.length;
+        if (length == 0) {
+            System.out.println("No shapes to display.");
+            return;
+        }
+        System.out.println("Sorted Shapes Output:");
+        System.out.println("First: " + sortedShapes[0]);
+        for (int i = 1000; i < length - 1; i += 1000) {
+            System.out.println("Element " + i + ": " + sortedShapes[i]);
+        }
+        System.out.println("Last: " + sortedShapes[length - 1]);
+    }
+}

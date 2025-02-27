@@ -1,0 +1,39 @@
+package shapes;
+
+/**
+ * Represents a Pentagonal Prism shape.
+ * For a regular pentagon:
+ * Base area = (5 * s² * tan(54°)) / 4 (s: edge length)
+ * Volume = base area * height
+ */
+public class PentagonalPrism extends Shape {
+    private double edge;
+    
+    /**
+     * Constructs a Pentagonal Prism with the specified height and edge length.
+     * @param height The height of the prism.
+     * @param edge The edge length of the pentagon's base.
+     */
+    public PentagonalPrism(double height, double edge) {
+        super(height);
+        this.edge = edge;
+    }
+    
+    @Override
+    public double calculateBaseArea() {
+        double tan54 = Math.tan(Math.toRadians(54));
+        return (5 * Math.pow(edge, 2) * tan54) / 4;
+    }
+    
+    @Override
+    public double calculateVolume() {
+        return calculateBaseArea() * height;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " [edge=" + edge +
+               ", baseArea=" + String.format("%.2f", calculateBaseArea()) +
+               ", volume=" + String.format("%.2f", calculateVolume()) + "]";
+    }
+}

@@ -1,0 +1,58 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Implements the Merge Sort algorithm.
+ */
+public class MergeSort {
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        if (arr == null || arr.length < 2) {
+            return;
+        }
+        mergeSort(arr, 0, arr.length - 1, cmp);
+    }
+    
+    private static void mergeSort(Shape[] arr, int left, int right, Comparator<? super Shape> cmp) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+            mergeSort(arr, left, mid, cmp);
+            mergeSort(arr, mid + 1, right, cmp);
+            merge(arr, left, mid, right, cmp);
+        }
+    }
+    
+    private static void merge(Shape[] arr, int left, int mid, int right, Comparator<? super Shape> cmp) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+        
+        Shape[] leftArr = new Shape[n1];
+        Shape[] rightArr = new Shape[n2];
+        
+        for (int i = 0; i < n1; i++) {
+            leftArr[i] = arr[left + i];
+        }
+        for (int j = 0; j < n2; j++) {
+            rightArr[j] = arr[mid + 1 + j];
+        }
+        
+        int i = 0, j = 0, k = left;
+        // Merge the two arrays according to the comparator.
+        while (i < n1 && j < n2) {
+            if (cmp.compare(leftArr[i], rightArr[j]) >= 0) {
+                arr[k++] = leftArr[i++];
+            } else {
+                arr[k++] = rightArr[j++];
+            }
+        }
+        
+        while (i < n1) {
+            arr[k++] = leftArr[i++];
+        }
+        
+        while (j < n2) {
+            arr[k++] = rightArr[j++];
+        }
+    }
+}

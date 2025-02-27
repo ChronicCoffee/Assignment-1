@@ -1,0 +1,97 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Provides a merge sort implementation for an array of Shape objects.
+ * The sort is performed in descending order (largest element first).
+ * If a Comparator is provided, it is used; otherwise, the natural ordering (Comparable)
+ * is used.
+ */
+public class MergeSort {
+
+    /**
+     * Sorts the given array of shapes using the merge sort algorithm in descending order.
+     * If the provided Comparator is null, the natural ordering (via Comparable) is used.
+     *
+     * @param arr the array of shapes to sort
+     * @param cmp the Comparator to determine ordering; if null, natural ordering is used.
+     */
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        if (cmp == null) {
+            cmp = new Comparator<Shape>() {
+                @Override
+                public int compare(Shape s1, Shape s2) {
+                    return ((Comparable<Shape>) s1).compareTo(s2);
+                }
+            };
+        }
+        if (arr == null || arr.length < 2) return;
+        mergeSort(arr, 0, arr.length - 1, cmp);
+    }
+
+    /**
+     * Recursively sorts the array between indices left and right using merge sort.
+     *
+     * @param arr the array of shapes
+     * @param left the left index of the subarray
+     * @param right the right index of the subarray
+     * @param cmp the Comparator used to order shapes
+     */
+    private static void mergeSort(Shape[] arr, int left, int right, Comparator<? super Shape> cmp) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergeSort(arr, left, mid, cmp);
+            mergeSort(arr, mid + 1, right, cmp);
+            merge(arr, left, mid, right, cmp);
+        }
+    }
+
+    /**
+     * Merges two sorted subarrays (arr[left..mid] and arr[mid+1..right]) into a single
+     * sorted subarray in descending order.
+     *
+     * @param arr the array of shapes
+     * @param left the starting index of the first subarray
+     * @param mid the ending index of the first subarray
+     * @param right the ending index of the second subarray
+     * @param cmp the Comparator used for ordering
+     */
+    private static void merge(Shape[] arr, int left, int mid, int right, Comparator<? super Shape> cmp) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+        
+        Shape[] leftArr = new Shape[n1];
+        Shape[] rightArr = new Shape[n2];
+        
+        // Copy data into temporary arrays.
+        for (int i = 0; i < n1; i++) {
+            leftArr[i] = arr[left + i];
+        }
+        for (int j = 0; j < n2; j++) {
+            rightArr[j] = arr[mid + 1 + j];
+        }
+        
+        int i = 0, j = 0, k = left;
+        
+        // Merge the two arrays into arr in descending order.
+        while (i < n1 && j < n2) {
+            if (cmp.compare(leftArr[i], rightArr[j]) >= 0) {
+                arr[k++] = leftArr[i++];
+            } else {
+                arr[k++] = rightArr[j++];
+            }
+        }
+        
+        // Copy any remaining elements from leftArr.
+        while (i < n1) {
+            arr[k++] = leftArr[i++];
+        }
+        
+        // Copy any remaining elements from rightArr.
+        while (j < n2) {
+            arr[k++] = rightArr[j++];
+        }
+    }
+}

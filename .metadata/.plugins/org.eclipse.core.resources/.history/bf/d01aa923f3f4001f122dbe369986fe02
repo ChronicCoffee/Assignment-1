@@ -1,0 +1,14 @@
+package shapes;
+
+import java.util.Comparator;
+
+/**
+ * Comparator for sorting shapes by base area in descending order.
+ */
+public class BaseAreaComparator implements Comparator<Shape> {
+    @Override
+    public int compare(Shape s1, Shape s2) {
+        // For descending order, compare s2 to s1.
+        return Double.compare(s2.calculateBaseArea(), s1.calculateBaseArea());
+    }
+}

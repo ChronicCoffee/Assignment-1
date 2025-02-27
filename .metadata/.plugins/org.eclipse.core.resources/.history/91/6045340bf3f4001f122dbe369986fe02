@@ -1,0 +1,62 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Provides a selection sort implementation for an array of Shape objects.
+ * The array is sorted in descending order (largest element first).
+ * If a Comparator is provided, it is used; otherwise, the natural ordering (Comparable)
+ * is used.
+ */
+public class SelectionSort {
+
+    /**
+     * Sorts the given array of shapes using the selection sort algorithm.
+     * The array is sorted in descending order.
+     *
+     * @param arr the array of shapes to sort
+     * @param cmp the Comparator used for ordering; if null, natural ordering is used.
+     */
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        // Use natural ordering if no comparator is provided.
+        if (cmp == null) {
+            cmp = new Comparator<Shape>() {
+                @Override
+                public int compare(Shape s1, Shape s2) {
+                    // Use the natural ordering via Comparable.
+                    return ((Comparable<Shape>) s1).compareTo(s2);
+                }
+            };
+        }
+        
+        int n = arr.length;
+        // Iterate through each position in the array.
+        for (int i = 0; i < n - 1; i++) {
+            int maxIndex = i;
+            // Find the maximum element (according to cmp) in the unsorted part.
+            for (int j = i + 1; j < n; j++) {
+                if (cmp.compare(arr[j], arr[maxIndex]) > 0) {
+                    maxIndex = j;
+                }
+            }
+            // Swap the found maximum element with the element at index i.
+            if (maxIndex != i) {
+                swap(arr, i, maxIndex);
+            }
+        }
+    }
+    
+    /**
+     * Swaps two elements in the given array.
+     *
+     * @param arr the array of shapes
+     * @param i the index of the first element
+     * @param j the index of the second element
+     */
+    private static void swap(Shape[] arr, int i, int j) {
+        Shape temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}

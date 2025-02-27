@@ -1,0 +1,37 @@
+package shapes;
+
+/**
+ * Represents a Square Prism shape.
+ * Base area = s²
+ * Volume = base area * height
+ */
+public class SquarePrism extends Shape {
+    private double edge;
+    
+    /**
+     * Constructs a Square Prism with the specified height and edge length.
+     * @param height The height of the prism.
+     * @param edge The edge length of the square base.
+     */
+    public SquarePrism(double height, double edge) {
+        super(height);
+        this.edge = edge;
+    }
+    
+    @Override
+    public double calculateBaseArea() {
+        return Math.pow(edge, 2);
+    }
+    
+    @Override
+    public double calculateVolume() {
+        return calculateBaseArea() * height;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " [edge=" + edge +
+               ", baseArea=" + String.format("%.2f", calculateBaseArea()) +
+               ", volume=" + String.format("%.2f", calculateVolume()) + "]";
+    }
+}

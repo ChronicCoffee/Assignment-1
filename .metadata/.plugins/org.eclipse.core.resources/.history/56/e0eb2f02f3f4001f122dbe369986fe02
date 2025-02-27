@@ -1,0 +1,49 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Provides a bubble sort implementation for an array of Shape objects.
+ * If a comparator is provided, it uses that comparator.
+ * Otherwise, it uses the natural ordering of the objects via the Comparable interface.
+ * The sort is performed in descending order.
+ */
+public class BubbleSort {
+    /**
+     * Sorts the given array of shapes using the bubble sort algorithm.
+     * The array is sorted in descending order (largest element first).
+     *
+     * @param arr the array of shapes to sort
+     * @param cmp the comparator to determine ordering; if null, the natural ordering (Comparable) is used
+     */
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        // If no comparator is provided, use natural ordering via Comparable.
+        if (cmp == null) {
+            cmp = new Comparator<Shape>() {
+                @Override
+                public int compare(Shape s1, Shape s2) {
+                    // Assume Shape implements Comparable<Shape>
+                    return ((Comparable<Shape>) s1).compareTo(s2);
+                }
+            };
+        }
+        
+        int n = arr.length;
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                // For descending order: if arr[j] is less than arr[j+1] according to cmp, swap them.
+                if (cmp.compare(arr[j], arr[j + 1]) < 0) {
+                    Shape temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            // If no two elements were swapped in the inner loop, then the array is sorted.
+            if (!swapped) break;
+        }
+    }
+}

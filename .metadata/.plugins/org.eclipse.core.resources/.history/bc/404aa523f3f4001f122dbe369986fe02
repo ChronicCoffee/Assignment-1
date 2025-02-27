@@ -1,0 +1,69 @@
+package shapes;
+
+/**
+ * Abstract class to represent a general three-dimensional shape.
+ * It implements Comparable so that shapes can be naturally ordered by height.
+ */
+public abstract class Shape implements Comparable<Shape> {
+
+    // All shapes have a height.
+    protected double height;
+
+    /**
+     * Constructor for a shape.
+     *
+     * @param height the height of the shape
+     */
+    public Shape(double height) {
+        this.height = height;
+    }
+
+    /**
+     * Gets the height of the shape.
+     *
+     * @return the height
+     */
+    public double getHeight() {
+        return height;
+    }
+
+    /**
+     * Abstract method to calculate the base area of the shape.
+     *
+     * @return the base area
+     */
+    public abstract double calculateBaseArea();
+
+    /**
+     * Abstract method to calculate the volume of the shape.
+     *
+     * @return the volume
+     */
+    public abstract double calculateVolume();
+
+    /**
+     * Compare this shape with another shape based on their heights.
+     * 
+     * Note: We want the sorting to be in descending order (largest height first).
+     *
+     * @param other the shape to be compared
+     * @return a negative integer, zero, or a positive integer as this shape is less
+     *         than, equal to, or greater than the specified shape.
+     */
+    @Override
+    public int compareTo(Shape other) {
+        // For descending order, compare other to this.
+        return Double.compare(other.height, this.height);
+    }
+
+    /**
+     * Provides a simple string representation of the shape.
+     * Override this further in the subclasses if needed.
+     *
+     * @return the string representation
+     */
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " [height=" + height + "]";
+    }
+}

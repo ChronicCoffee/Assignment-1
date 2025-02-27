@@ -1,0 +1,89 @@
+package utilities;
+
+import java.util.Comparator;
+import shapes.Shape;
+
+/**
+ * Provides a heap sort implementation for an array of Shape objects using a min-heap.
+ * This implementation sorts the array directly into descending order.
+ * If a Comparator is provided, it is used; otherwise, the natural ordering (Comparable) is used.
+ */
+public class HeapSort {
+    
+    /**
+     * Sorts the given array of shapes using the heap sort algorithm (min-heap version) 
+     * and the provided Comparator. The array is sorted in descending order.
+     * 
+     * @param arr the array of shapes to sort
+     * @param cmp the Comparator used for ordering; if null, the natural ordering (Comparable) is used
+     */
+    public static void sort(Shape[] arr, Comparator<? super Shape> cmp) {
+        // Use natural ordering if no comparator is provided.
+        if (cmp == null) {
+            cmp = new Comparator<Shape>() {
+                @Override
+                public int compare(Shape s1, Shape s2) {
+                    return ((Comparable<Shape>) s1).compareTo(s2);
+                }
+            };
+        }
+        
+        int n = arr.length;
+        // Build a min-heap so that the smallest element (according to cmp) is at the root.
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            minHeapify(arr, n, i, cmp);
+        }
+        
+        // Extract elements from the heap one by one.
+        // After extraction, the array will be sorted in descending order.
+        for (int i = n - 1; i >= 0; i--) {
+            swap(arr, 0, i);
+            // Heapify the reduced heap.
+            minHeapify(arr, i, 0, cmp);
+        }
+    }
+    
+    /**
+     * Heapifies a subtree rooted with index i in a heap of size n.
+     * This method ensures that the subtree satisfies the min-heap property.
+     * 
+     * @param arr the array representing the heap
+     * @param n the size of the heap
+     * @param i the index of the subtree root
+     * @param cmp the Comparator used for ordering
+     */
+    private static void minHeapify(Shape[] arr, int n, int i, Comparator<? super Shape> cmp) {
+        int smallest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        
+        // If left child exists and is less than current smallest according to cmp.
+        if (left < n && cmp.compare(arr[left], arr[smallest]) < 0) {
+            smallest = left;
+        }
+        
+        // If right child exists and is less than current smallest according to cmp.
+        if (right < n && cmp.compare(arr[right], arr[smallest]) < 0) {
+            smallest = right;
+        }
+        
+        // If the smallest element is not the current root, swap and continue heapifying.
+        if (smallest != i) {
+            swap(arr, i, smallest);
+            minHeapify(arr, n, smallest, cmp);
+        }
+    }
+    
+    /**
+     * Swaps two elements in the array.
+     * 
+     * @param arr the array of shapes
+     * @param i the first index
+     * @param j the second index
+     */
+    private static void swap(Shape[] arr, int i, int j) {
+        Shape temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}

@@ -1,0 +1,38 @@
+package shapes;
+
+/**
+ * Represents an Octagonal Prism shape.
+ * For a regular octagon:
+ * Base area = 2*(1+√2)*s² (s: edge length)
+ * Volume = base area * height
+ */
+public class OctagonalPrism extends Shape {
+    private double edge;
+    
+    /**
+     * Constructs an Octagonal Prism with the specified height and edge length.
+     * @param height The height of the prism.
+     * @param edge The edge length of the octagon's base.
+     */
+    public OctagonalPrism(double height, double edge) {
+        super(height);
+        this.edge = edge;
+    }
+    
+    @Override
+    public double calculateBaseArea() {
+        return 2 * (1 + Math.sqrt(2)) * Math.pow(edge, 2);
+    }
+    
+    @Override
+    public double calculateVolume() {
+        return calculateBaseArea() * height;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " [edge=" + edge +
+               ", baseArea=" + String.format("%.2f", calculateBaseArea()) +
+               ", volume=" + String.format("%.2f", calculateVolume()) + "]";
+    }
+}

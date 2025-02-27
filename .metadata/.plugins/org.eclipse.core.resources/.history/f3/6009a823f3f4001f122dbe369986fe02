@@ -1,0 +1,37 @@
+package shapes;
+
+/**
+ * Represents a Cylinder shape.
+ * Base area = π * r²
+ * Volume = base area * height
+ */
+public class Cylinder extends Shape {
+    private double radius;
+    
+    /**
+     * Constructs a Cylinder with the specified height and radius.
+     * @param height The height of the cylinder.
+     * @param radius The radius of the cylinder's base.
+     */
+    public Cylinder(double height, double radius) {
+        super(height);
+        this.radius = radius;
+    }
+    
+    @Override
+    public double calculateBaseArea() {
+        return Math.PI * Math.pow(radius, 2);
+    }
+    
+    @Override
+    public double calculateVolume() {
+        return calculateBaseArea() * height;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " [radius=" + radius +
+               ", baseArea=" + String.format("%.2f", calculateBaseArea()) +
+               ", volume=" + String.format("%.2f", calculateVolume()) + "]";
+    }
+}
